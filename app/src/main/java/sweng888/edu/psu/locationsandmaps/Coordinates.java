@@ -1,6 +1,8 @@
 package sweng888.edu.psu.locationsandmaps;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
     private double latitude;
     private double longitude;
     private String place;
@@ -41,5 +43,13 @@ public class Coordinates {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Place: %s. Coordinates - latitude (%.6f), longitude (%.6f)",
+                place,
+                latitude,
+                longitude);
     }
 }
