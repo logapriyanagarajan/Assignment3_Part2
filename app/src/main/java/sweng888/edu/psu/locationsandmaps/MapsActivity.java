@@ -60,11 +60,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapFragment.getMapAsync(MapsActivity.this);
 
-        intentFilter = new IntentFilter("sweng888.edu.psu.locationsandmaps");
+        intentFilter = new IntentFilter("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
         myReceiverActivity = new MyReceiverActivity();
 
         //intentFilter = new IntentFilter("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
-       // myReceiverActivity = new MyReceiverActivity();
+        // myReceiverActivity = new MyReceiverActivity();
 
         /*mRunnable = new Runnable() {
             @Override
@@ -81,9 +81,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         Intent intent = getIntent();
-        MapLocation mapLocation = (MapLocation) intent.getSerializableExtra(BroadcastMapsActivity.LOCATION_PARAMS);
+        Coordinates coordinates = (Coordinates) intent.getSerializableExtra(BroadcastMapsActivity.LOCATION_PARAMS);
 
-        LatLng latLng = new LatLng(mapLocation.getLatitude(),mapLocation.getLongitude());
+        LatLng latLng = new LatLng(coordinates.getLatitude(),coordinates.getLongitude());
 
         /*Intent intent = getIntent();
         latitude = intent.getStringExtra("LATITUDE");
@@ -94,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Double lon = Double.valueOf(longitude);
         LatLng latLng = new LatLng(lat,lon);*/
 
-        mMap.addMarker(new MarkerOptions().position(latLng).title(mapLocation.getCity()).draggable(true));
+        mMap.addMarker(new MarkerOptions().position(latLng).title(coordinates.getPlace()).draggable(true));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
         //mapCameraConfiguration(googleMap);
@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         createMarkersFromFirebase(mMap);
 
-        }
+    }
 
     public void mapCameraConfiguration(GoogleMap googleMap) {
 
@@ -138,6 +138,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.position(latlng) // coordinates2
                 .title(title) // location name
                 .snippet(snippet); // location description
+
+        triggerBroadcastMessageFromFirebase(latlng,title);
 
         // Update the global variable (currentMapMarker)
         currentMapMarker = googleMap.addMarker(markerOptions);
@@ -237,14 +239,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mHandler.postDelayed(mRunnable, 5);
                 LatLng latLng = new LatLng(c.getLatitude(), c.getLongitude());
 
-                //triggerBroadcastMessageFromFirebase(latLng,c.getPlace());
-
-                /*Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
-                MapLocation mapLocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
-                broadcastIntent.putExtra(LOCATION_PARAMS,  mapLocation);
-                //broadcastIntent.putExtra("COORDINATES",latLng);
-                sendBroadcast(broadcastIntent);*/
-
                 createCustomMapMarkers(googleMap, latLng, c.getPlace(), "hiii");
 
             }
@@ -274,13 +268,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void triggerBroadcastMessageFromFirebase(LatLng latLng, String place) {
-        MapLocation mapLocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
+        Coordinates c = new Coordinates();
+        c.setLatitude(latLng.latitude);
+        c.setLongitude(latLng.longitude);
+        c.setPlace(place);
+
         Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
-        broadcastIntent.putExtra(LOCATION_PARAMS,  mapLocation);
+        broadcastIntent.putExtra(LOCATION_PARAMS, c);
         sendBroadcast(broadcastIntent);
     }
 
-   @Override
+    @Override
     protected void onStart() {
         super.onStart();
         // Register the Broadcast Receiver.
