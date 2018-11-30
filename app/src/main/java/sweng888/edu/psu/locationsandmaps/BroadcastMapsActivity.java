@@ -50,19 +50,18 @@ public class BroadcastMapsActivity extends AppCompatActivity {
 
                 Double lat = Double.valueOf(mEditTextLat.getText().toString());
                 Double lng = Double.valueOf(mEditTextLon.getText().toString());
-                LatLng latLng = new LatLng(lat, lng);
+                LatLng latLng = new LatLng(lat,lng);
 
-
-                MapLocation mapLocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
+                Coordinates c = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
 
                 Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
-                broadcastIntent.putExtra(LOCATION_PARAMS,  mapLocation);
+                broadcastIntent.putExtra(LOCATION_PARAMS, c);
                 sendBroadcast(broadcastIntent);
 
                 Intent intent = new  Intent(BroadcastMapsActivity.this, MapsActivity.class);
-                intent.putExtra(LOCATION_PARAMS, mapLocation);
+                intent.putExtra(LOCATION_PARAMS, c);
                 startActivity(intent);
-                }
+            }
         });
     }
 
