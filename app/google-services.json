@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "150302041778",
+    "firebase_url": "https://locationsandmaps.firebaseio.com",
+    "project_id": "locationsandmaps",
+    "storage_bucket": "locationsandmaps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150302041778:android:27fca4cea679a779",
+        "android_client_info": {
+          "package_name": "sweng888.edu.psu.locationsandmaps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150302041778-hlpe4c79jfncobs7sq0rgh59i1itpdi8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL8Jf6QInyIR-MYwB1u36qiUACD-uNdmE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
