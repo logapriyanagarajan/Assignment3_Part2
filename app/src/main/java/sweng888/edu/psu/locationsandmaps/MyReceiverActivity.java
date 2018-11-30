@@ -30,17 +30,18 @@ public class MyReceiverActivity extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        MapLocation mapLocation =  (MapLocation) intent.getSerializableExtra(BroadcastMapsActivity.LOCATION_PARAMS);
+        Coordinates c =  (Coordinates) intent.getSerializableExtra(BroadcastMapsActivity.LOCATION_PARAMS);
 
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         builder = new Notification.Builder(context, CHANNEL_NAME);
+
 
         //String place = mapLocation.getCountry();
         //LatLng lat = new LatLng(19,72);
 
         builder.setSmallIcon(R.drawable.broadcast);
-        builder.setContentTitle(mapLocation.getCity());
-        LatLng latLng = new LatLng(mapLocation.getLatitude(), mapLocation.getLongitude());
+        builder.setContentTitle(c.getPlace());
+        LatLng latLng = new LatLng(c.getLatitude(),c.getLongitude());
         String latlng1 = latLng.toString();
         builder.setContentText(latlng1);
 
