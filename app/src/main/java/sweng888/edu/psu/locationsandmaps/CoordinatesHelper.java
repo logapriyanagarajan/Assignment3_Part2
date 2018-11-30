@@ -13,23 +13,23 @@ import java.util.Locale;
 public class CoordinatesHelper {
 
         // This method instantiate a MapLocation object based on the LatLng provided as input.
-        // The Google API provides all location details based on the coordinates.
-        public static Coordinates getAddressFromLatLgn(Context context, LatLng latLng){
+        // The Google API provides all location details based on the coordinates2.
+        public static MapLocation getAddressFromLatLgn(Context context, LatLng latLng){
 
-            Coordinates mapLocation = null;
+            MapLocation mapLocation = null;
             Geocoder geocoder = new Geocoder(context, Locale.getDefault());
             try {
                 List<Address> locations = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 5);
 
-                mapLocation = new Coordinates();
+                mapLocation = new MapLocation();
                 mapLocation.setLatitude(latLng.latitude);
                 mapLocation.setLongitude(latLng.longitude);
-                mapLocation.setPlace(locations.get(0).getFeatureName());
-                /*mapLocation.setAddress(locations.get(0).getAddressLine(0));
+                mapLocation.setTitle(locations.get(0).getFeatureName());
+                mapLocation.setAddress(locations.get(0).getAddressLine(0));
                 mapLocation.setCity(locations.get(0).getLocality());
                 mapLocation.setState(locations.get(0).getAdminArea());
                 mapLocation.setCountry(locations.get(0).getCountryName());
-                mapLocation.setZip(locations.get(0).getPostalCode());*/
+                mapLocation.setZip(locations.get(0).getPostalCode());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -38,6 +38,4 @@ public class CoordinatesHelper {
             return mapLocation;
         }
 
-    }
-
-
+}

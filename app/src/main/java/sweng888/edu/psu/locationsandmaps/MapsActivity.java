@@ -2,7 +2,6 @@ package sweng888.edu.psu.locationsandmaps;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,7 +15,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -27,9 +25,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    public static final String LOCATION_PARAMS = "LOCATION";
 
     public GoogleMap mMap;
 
@@ -65,6 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         intentFilter = new IntentFilter("sweng888.edu.psu.locationsandmaps");
         myReceiverActivity = new MyReceiverActivity();
 
+        //intentFilter = new IntentFilter("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
+       // myReceiverActivity = new MyReceiverActivity();
+
         /*mRunnable = new Runnable() {
             @Override
             public void run() {
@@ -79,21 +80,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*intentFilter = new IntentFilter("sweng888.edu.psu.locationsandmaps");
-        myReceiverActivity = new MyReceiverActivity();
-
         Intent intent = getIntent();
+        MapLocation mapLocation = (MapLocation) intent.getSerializableExtra(BroadcastMapsActivity.LOCATION_PARAMS);
+
+        LatLng latLng = new LatLng(mapLocation.getLatitude(),mapLocation.getLongitude());
+
+        /*Intent intent = getIntent();
         latitude = intent.getStringExtra("LATITUDE");
         longitude = intent.getStringExtra("LONGITUDE");
         location = intent.getStringExtra("LOCATION");
 
         Double lat = Double.valueOf(latitude);
-        Double lon = Double.valueOf(longitude);*/
+        Double lon = Double.valueOf(longitude);
+        LatLng latLng = new LatLng(lat,lon);*/
 
-        LatLng somewhere = new LatLng(19, 72);
-        mMap.addMarker(new MarkerOptions().position(somewhere).title("Mumbai").draggable(true));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(somewhere));
-
+        mMap.addMarker(new MarkerOptions().position(latLng).title(mapLocation.getCity()).draggable(true));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
         //mapCameraConfiguration(googleMap);
         useMapClickListener(googleMap);
@@ -133,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void createCustomMapMarkers(GoogleMap googleMap, LatLng latlng, String title, String snippet) {
 
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latlng) // coordinates
+        markerOptions.position(latlng) // coordinates2
                 .title(title) // location name
                 .snippet(snippet); // location description
 
@@ -141,11 +143,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentMapMarker = googleMap.addMarker(markerOptions);
     }
 
-    public void createCustomMapMarkersfromLocation(LatLng latLng){
+    /*public void createCustomMapMarkersfromLocation(LatLng latLng){
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng).title("hi").snippet("hello");
 
-    }
+    }*/
 
 
     public void useMapClickListener(final GoogleMap googleMap) {
@@ -178,7 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapLongClick(LatLng latLng) {
                 Log.i(LOG_MAP, "setOnMapLongClickListener");
                 LatLng latlng = new LatLng(latLng.latitude, latLng.longitude);
-                Log.d("TAG", "Update the new coordinates on long click");
+                Log.d("TAG", "Update the new coordinates2 on long click");
             }
 
         });
@@ -235,7 +237,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mHandler.postDelayed(mRunnable, 5);
                 LatLng latLng = new LatLng(c.getLatitude(), c.getLongitude());
 
+                //triggerBroadcastMessageFromFirebase(latLng,c.getPlace());
+
+                /*Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
+                MapLocation mapLocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
+                broadcastIntent.putExtra(LOCATION_PARAMS,  mapLocation);
+                //broadcastIntent.putExtra("COORDINATES",latLng);
+                sendBroadcast(broadcastIntent);*/
+
                 createCustomMapMarkers(googleMap, latLng, c.getPlace(), "hiii");
+
             }
 
 
@@ -260,5 +271,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+    }
+
+    private void triggerBroadcastMessageFromFirebase(LatLng latLng, String place) {
+        MapLocation mapLocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
+        Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
+        broadcastIntent.putExtra(LOCATION_PARAMS,  mapLocation);
+        sendBroadcast(broadcastIntent);
+    }
+
+   @Override
+    protected void onStart() {
+        super.onStart();
+        // Register the Broadcast Receiver.
+        registerReceiver(myReceiverActivity, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        // Unregister the Broadcast Receiver
+        unregisterReceiver(myReceiverActivity);
+        super.onStop();
     }
 }

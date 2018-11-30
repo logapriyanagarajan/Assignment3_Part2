@@ -83,7 +83,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_view_location" />
 
     <Button
-        android:id="@+id/btnClick"
+        android:id="@+id/btnNavigation"
         android:layout_width="161dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

@@ -3,6 +3,7 @@ package sweng888.edu.psu.locationsandmaps;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,7 +13,12 @@ import android.widget.EditText;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
+
 public class BroadcastMapsActivity extends AppCompatActivity {
+
+    public static final String LOCATION_PARAMS = "LOCATION";
+
 
     private EditText mEditTextLat;
     private EditText mEditTextLon;
@@ -22,11 +28,8 @@ public class BroadcastMapsActivity extends AppCompatActivity {
 
     Coordinates coordinates = null;
 
-    public static final String LOCATION_PARAMS = "LOCATION";
-
     public IntentFilter intentFilter = null;
     public MyReceiverActivity myReceiverActivity = null;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,50 +41,49 @@ public class BroadcastMapsActivity extends AppCompatActivity {
         mEditTextLocation = (EditText) findViewById(R.id.editTextLocation);
 
 
-        mBtnClick = (Button) findViewById(R.id.btnClick);
+        mBtnClick = (Button) findViewById(R.id.btnNavigation);
 
         mBtnClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("TAG", "****************************in click*****************");
 
-                String lat = (mEditTextLat.getText().toString().trim());
-                String lon = (mEditTextLon.getText().toString().trim());
-                String place = mEditTextLocation.getText().toString();
-                LatLng latLng = new LatLng(Double.valueOf(lat), Double.valueOf(lon));
+                Double lat = Double.valueOf(mEditTextLat.getText().toString());
+                Double lng = Double.valueOf(mEditTextLon.getText().toString());
+                LatLng latLng = new LatLng(lat, lng);
 
-                Coordinates maplocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(), latLng);
 
-                Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.");
-                broadcastIntent.putExtra(LOCATION_PARAMS, maplocation.getPlace());
+                MapLocation mapLocation = CoordinatesHelper.getAddressFromLatLgn(getApplicationContext(),latLng);
+
+                Intent broadcastIntent = new Intent("sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST");
+                broadcastIntent.putExtra(LOCATION_PARAMS,  mapLocation);
                 sendBroadcast(broadcastIntent);
 
                 Intent intent = new  Intent(BroadcastMapsActivity.this, MapsActivity.class);
-                intent.putExtra("LATITUDE", mEditTextLat.getText().toString().trim());
-                intent.putExtra("LONGITUDE", mEditTextLon.getText().toString().trim());
-                intent.putExtra("LOCATION", mEditTextLocation.getText().toString().trim());
+                intent.putExtra(LOCATION_PARAMS, mapLocation);
                 startActivity(intent);
-
-
-            }
+                }
         });
-
     }
+
     private void setUpBroadcastReceiver(){
         intentFilter = new IntentFilter(MyReceiverActivity.MAP_BROADCAST);
         myReceiverActivity = new MyReceiverActivity();
         registerReceiver(myReceiverActivity, intentFilter);
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         setUpBroadcastReceiver();
+        // Register the Broadcast Receiver.
+        //registerReceiver(myReceiverActivity, intentFilter);
     }
 
     @Override
     protected void onStop() {
+        // Unregister the Broadcast Receiver
         unregisterReceiver(myReceiverActivity);
         super.onStop();
     }
 }
-
-

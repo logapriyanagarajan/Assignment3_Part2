@@ -32,7 +32,7 @@
 
         <receiver android:name=".MyReceiverActivity">
             <intent-filter>
-                <action android:name="sweng888.edu.psu.locationsandmaps" />
+                <action android:name="sweng888.edu.psu.locationsandmaps.action.MAP_BROADCAST" />
             </intent-filter>
         </receiver>
 

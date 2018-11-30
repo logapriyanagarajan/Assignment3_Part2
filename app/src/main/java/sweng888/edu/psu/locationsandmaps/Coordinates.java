@@ -1,40 +1,37 @@
 package sweng888.edu.psu.locationsandmaps;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class Coordinates {
-
-    private Double latitude;
-    private Double longitude;
+    private double latitude;
+    private double longitude;
     private String place;
 
     public Coordinates() {
     }
 
-    public Coordinates(Double latitude, Double longitude) {
+    public Coordinates(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public Coordinates(Double latitude, Double longitude, String place) {
+    public Coordinates(double latitude, double longitude, String place) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.place = place;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
